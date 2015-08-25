@@ -74,18 +74,26 @@
         , selectedValue = '';
       this.$source.find('option').each(function() {
         var option = $(this);
-        if (option.val() === '') {
-          that.options.placeholder = option.text();
-          return;
+        
+
+        if (option.val() !== '?') {
+
+          if (option.val() === '') {
+            that.options.placeholder = option.text();
+            return;
+          }
+          map[option.text()] = option.val();
+          source.push(option.text());
+          if (option.prop('selected')) {
+            selected = option.text();
+            selectedValue = option.val();
+          }
+          
         }
-        map[option.text()] = option.val();
-        source.push(option.text());
-        if (option.prop('selected')) {
-          selected = option.text();
-          selectedValue = option.val();
-        }
+
       })
       this.map = map;
+
       if (selected) {
         this.$element.val(selected);
         this.$target.val(selectedValue);
@@ -126,6 +134,7 @@
     }
 
   , show: function () {
+
       var pos = $.extend({}, this.$element.position(), {
         height: this.$element[0].offsetHeight
       });
@@ -138,7 +147,7 @@
         })
         .show();
 
-      $('.dropdown-menu').on('mousedown', $.proxy(this.scrollSafety, this));
+      $('.goa-dropdown-list').on('mousedown', $.proxy(this.scrollSafety, this));
 
       this.shown = true;
       return this;
@@ -146,7 +155,7 @@
 
   , hide: function () {
       this.$menu.hide();
-      $('.dropdown-menu').off('mousedown', $.proxy(this.scrollSafety, this));
+      $('.goa-dropdown-list').off('mousedown', $.proxy(this.scrollSafety, this));
       this.$element.on('blur', $.proxy(this.blur, this));
       this.shown = false;
       return this;
@@ -244,6 +253,7 @@
     }
 
   , toggle: function () {
+
     if (!this.disabled) {
       if (this.$container.hasClass('combobox-selected')) {
         this.clearTarget();
@@ -383,6 +393,7 @@
 
   , focus: function (e) {
       this.focused = true;
+      this.lookup();
     }
 
   , blur: function (e) {
@@ -401,7 +412,6 @@
       e.stopPropagation();
       e.preventDefault();
       this.select();
-      this.$element.focus();
     }
 
   , mouseenter: function (e) {
@@ -429,7 +439,7 @@
 
   $.fn.combobox.defaults = {
     bsVersion: '3'
-  , menu: '<ul class="typeahead typeahead-long dropdown-menu"></ul>'
+  , menu: '<ul class="goa-dropdown-list combobox-dropdown"></ul>'
   , item: '<li><a href="#"></a></li>'
   };
 
